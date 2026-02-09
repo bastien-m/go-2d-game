@@ -1,0 +1,41 @@
+# --- Binaires et Exécutables ---
+# Les fichiers compilés (ceux générés par go build)
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+# Si tu nommes ton binaire comme ton projet
+bin
+
+tmp
+
+# --- Outils de Test ---
+# Sorties de couverture de code
+*.out
+*.test
+*.prof
+
+# --- Dépendances ---
+# On ne versionne pas le dossier vendor sauf cas très particulier
+# (Go utilise le fichier go.mod pour gérer ça proprement)
+vendor/
+
+# --- IDE / Éditeurs ---
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# IntelliJ / GoLand
+.idea/
+
+# Fichiers temporaires système
+.DS_Store
+Thumbs.db
+
+# --- Environnement ---
+.env

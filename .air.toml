@@ -1,0 +1,27 @@
+#:schema https://json.schemastore.org/any.json
+root = "."
+testdata_dir = "testdata"
+tmp_dir = "tmp"
+
+[build]
+# On compile le projet vers le dossier tmp
+bin = "./tmp/main"
+# Commande de build standard (le point signifie qu'on build le package main)
+cmd = "go build -o ./tmp/main ."
+# On surveille les extensions .go et les fichiers de maps/assets
+include_ext = ["go", "tpl", "tmpl", "html", "json", "png"]
+# On ignore les dossiers de build et les dépendances
+exclude_dir = ["assets", "tmp", "vendor"]
+# On peut aussi ignorer des fichiers spécifiques
+exclude_file = []
+# Délai avant de relancer le build (pour éviter de compiler trop vite)
+delay = 1000
+# Arrêter l'ancien processus avant de lancer le nouveau
+stop_on_error = true
+log = "air.log"
+
+[log]
+time = true
+
+[screen]
+clear_on_rebuild = true
