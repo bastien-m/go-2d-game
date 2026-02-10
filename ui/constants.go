@@ -3,7 +3,6 @@ package ui
 const (
 	SplashScreen Screen = iota
 	LevelScreen
-	GameOverScreen
 )
 
 const (

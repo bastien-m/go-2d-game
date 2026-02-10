@@ -7,7 +7,6 @@ import (
 	"image"
 	"image/color"
 	"log"
-	"math"
 	"os"
 
 	"github.com/bastien-m/mario/assets"
@@ -101,9 +100,9 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	case SplashScreen:
 		return screenWidth, screenHeight
 	case LevelScreen:
-		return int(math.Abs((screenWidth + 100) / 3)), int(math.Abs(screenHeight / 3))
+		return screenWidth / 2, screenHeight / 2
 	}
-	return int(math.Abs(screenWidth / 1.7)), int(math.Abs(screenHeight / 1.7))
+	return screenWidth, screenHeight
 }
 
 func Run(resources embed.FS) {
