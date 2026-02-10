@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"image"
 	_ "image/png"
-	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -48,12 +47,8 @@ func loadEmbeddedImage(resource embed.FS, name string) (*ebiten.Image, error) {
 	return ebiten.NewImageFromImage(img), nil
 }
 
-func BuildTilesetManager(resources embed.FS, filename string, tileSize, rows, columns int) (*TilesetManager, error) {
+func BuildTilesetManager(img *ebiten.Image, tileSize, rows, columns int) (*TilesetManager, error) {
 
-	fullImage, err := loadEmbeddedImage(resources, filename)
-	if err != nil {
-		return nil, fmt.Errorf("Cant open file %s %w", filename, err)
-	}
 	manager := &TilesetManager{
 		Tiles: make(map[int]*ebiten.Image),
 	}
@@ -63,7 +58,7 @@ func BuildTilesetManager(resources embed.FS, filename string, tileSize, rows, co
 			rect := image.Rect(tileSize*j, tileSize*i, tileSize*(j+1), tileSize*(i+1))
 
 			index := (i * rows) + j + 1
-			manager.Tiles[index] = fullImage.SubImage(rect).(*ebiten.Image)
+			manager.Tiles[index] = img.SubImage(rect).(*ebiten.Image)
 		}
 	}
 
@@ -84,16 +79,10 @@ type JsonMapFile struct {
 	} `json:"layers"`
 }
 
-func BuildLevel(levelDescriptorPath string) (*JsonMapFile, error) {
-	data, err := os.ReadFile(levelDescriptorPath)
-
-	if err != nil {
-		return nil, fmt.Errorf("Unable to read file %s %w", levelDescriptorPath, err)
-	}
-
+func BuildLevel(level []byte) (*JsonMapFile, error) {
 	var mapFile JsonMapFile
 
-	err = json.Unmarshal(data, &mapFile)
+	err := json.Unmarshal(level, &mapFile)
 	if err != nil {
 		return nil, fmt.Errorf("Error while parsing JSON file : %w", err)
 	}
