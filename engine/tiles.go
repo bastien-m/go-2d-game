@@ -1,11 +1,11 @@
 package engine
 
 import (
-	"embed"
 	"encoding/json"
 	"fmt"
 	"image"
 	_ "image/png"
+	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -26,25 +26,6 @@ const (
 
 type TilesetManager struct {
 	Tiles map[int]*ebiten.Image
-}
-
-func loadEmbeddedImage(resource embed.FS, name string) (*ebiten.Image, error) {
-	// 1. Lire le fichier depuis l'embed (chemin racine)
-	data, err := resource.Open(name)
-	if err != nil {
-		return nil, err
-	}
-	defer data.Close()
-
-	// 2. Décoder l'image (PNG/JPG)
-	// C'est ici que l'import _ "image/png" est crucial !
-	img, _, err := image.Decode(data)
-	if err != nil {
-		return nil, err
-	}
-
-	// 3. Convertir l'image standard Go en image Ebitengine
-	return ebiten.NewImageFromImage(img), nil
 }
 
 func BuildTilesetManager(img *ebiten.Image, tileSize, rows, columns int) (*TilesetManager, error) {
@@ -73,14 +54,14 @@ type ChunkJson struct {
 	Y      int    `json:"y"`
 }
 
-type JsonMapFile struct {
+type MapLevel struct {
 	Layers []struct {
 		Chunks []ChunkJson `json:"chunks"`
 	} `json:"layers"`
 }
 
-func BuildLevel(level []byte) (*JsonMapFile, error) {
-	var mapFile JsonMapFile
+func GetLevel(level []byte) (*MapLevel, error) {
+	var mapFile MapLevel
 
 	err := json.Unmarshal(level, &mapFile)
 	if err != nil {
@@ -88,4 +69,31 @@ func BuildLevel(level []byte) (*JsonMapFile, error) {
 	}
 
 	return &mapFile, nil
+}
+
+type Direction int
+
+const (
+	UP Direction = iota
+	RIGHT
+	LEFT
+	DOWN
+)
+
+func (m *MapLevel) TileAt(x, y float64, direction Direction) Tile {
+	fmt.Printf("[DEBUG] tileX: %f tileY: %f\n", x, y)
+
+	for i := range m.Layers {
+		for _, chunk := range m.Layers[i].Chunks {
+			fcx := float64(chunk.X)
+			fcy := float64(chunk.Y)
+			fwidth := float64(chunk.Width)
+			fheight := float64(chunk.Height)
+			if x >= fcx && x < fcx+fwidth && y >= fcy && y < fcy+fheight {
+				return chunk.Data[int(math.Floor(x))+int(math.Floor(y))*int(math.Floor(fwidth))]
+			}
+		}
+	}
+
+	return -1
 }

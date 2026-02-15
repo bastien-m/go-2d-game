@@ -5,11 +5,12 @@ import (
 
 	"github.com/bastien-m/mario/assets"
 	"github.com/bastien-m/mario/engine"
+	"github.com/bastien-m/mario/engine/constants"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func (g *Game) drawLevelScreen(screen *ebiten.Image) {
-	mapFile, err := engine.BuildLevel(assets.Level01)
+	mapFile, err := engine.GetLevel(assets.Level01)
 	if err != nil {
 		fmt.Printf("Error occured while fetching assets %v", err)
 	}
@@ -18,15 +19,15 @@ func (g *Game) drawLevelScreen(screen *ebiten.Image) {
 
 	for _, layer := range mapFile.Layers {
 		for _, chunk := range layer.Chunks {
-			startXPx := chunk.X * assetSize
+			startXPx := chunk.X * constants.AssetSize
 			for i, tileType := range chunk.Data {
 				if tileType == engine.Air || tileType == engine.InitialPosition {
 					continue
 				}
 				imgOpts.GeoM.Reset()
 
-				xPx := startXPx + ((i % chunk.Width) * assetSize)
-				yPx := (i / chunk.Width) * assetSize
+				xPx := startXPx + ((i % chunk.Width) * constants.AssetSize)
+				yPx := (i / chunk.Width) * constants.AssetSize
 
 				tile := g.tileset[int(tileType)]
 

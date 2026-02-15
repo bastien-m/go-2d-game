@@ -4,7 +4,7 @@ import (
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
@@ -23,8 +23,14 @@ func (b *Button) Draw(screen *ebiten.Image) {
 	// Border
 	vector.StrokeRect(screen, float32(b.X), float32(b.Y), float32(b.W), float32(b.H), 2, color.RGBA{50, 50, 150, 255}, true)
 
-	labelX := b.X + b.W/2 - len(b.Label)*3
-	labelY := b.Y + b.H/2 - 8
-	ebitenutil.DebugPrintAt(screen, b.Label, labelX, labelY)
+	face := &text.GoTextFace{
+		Source: FontSource,
+		Size:   16,
+	}
+	w, h := text.Measure(b.Label, face, 0)
 
+	op := &text.DrawOptions{}
+	op.GeoM.Translate(float64(b.X)+float64(b.W)/2-w/2, float64(b.Y)+float64(b.H)/2-h/2)
+	op.ColorScale.ScaleWithColor(color.White)
+	text.Draw(screen, b.Label, face, op)
 }

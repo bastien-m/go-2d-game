@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	ui.Run(AssetsFS)
+	ui.Run()
 }
